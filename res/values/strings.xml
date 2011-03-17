@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hello">Hello World, BounceClock!</string>
-    <string name="app_name">BounceClock</string>
+    <string name="app_name">Bounce Clock</string>
     <string name="hours">Hours</string>
     <string name="days">Days</string>
     <string name="minutes">Minutes</string>
     <string name="seconds">Seconds</string>    
+    <string name="wallpaper">Bounce Clock</string>    
 </resources>

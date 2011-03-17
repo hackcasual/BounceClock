@@ -42,7 +42,8 @@ public class GL2JNIActivity extends Activity implements SensorEventListener {
     @Override protected void onPause() {
         super.onPause();
         mView.onPause();
-        backgroundRenderer.shutdown();
+        if (backgroundRenderer != null)
+        	backgroundRenderer.shutdown();
         backgroundRenderer = null;
         SensorManager mSensorManager = (SensorManager)getSystemService(SENSOR_SERVICE);
         mSensorManager.unregisterListener(this);

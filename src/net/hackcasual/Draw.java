@@ -46,7 +46,7 @@ public class Draw {
 	
 	public static void renderTimeHorizontal(Canvas target, int x, int y, int w, int h, int days, int hours, int minutes, int seconds) {
 
-
+		y *= 2.0f;
 		float radius = w / 118.0f;
 		
 		GL2JNILib.setRadius(radius);

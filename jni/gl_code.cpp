@@ -185,7 +185,7 @@ void simulatePoints(float grav_x, float grav_y) {
 		point_buffer[i].y += point_buffer[i].vel_y;
 		point_buffer[i].rot += point_buffer[i].vel_rot;
 		
-		if (point_buffer[i].vel_x < 0.3f && point_buffer[i].vel_x > -0.3f) {
+		if (point_buffer[i].vel_x < 0.1f && point_buffer[i].vel_x > -0.1f && gravity_x < 0.01f && gravity_x > 0.01f) {
 			point_buffer[i].vel_x = 1.0f;
 		}
 		
