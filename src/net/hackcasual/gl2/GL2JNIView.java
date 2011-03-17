@@ -336,7 +336,7 @@ class GL2JNIView extends GLSurfaceView {
     	int textureID;
     	boolean updateBackground = false;
     	
-    	BounceClock backgroundRenderer;
+    	
     	
         public void onDrawFrame(GL10 gl) {
         	if (updateBackground) {
@@ -366,8 +366,7 @@ class GL2JNIView extends GLSurfaceView {
         
         public void onSurfaceChanged(final GL10 gl, int width, int height) {
         	
-        	if (backgroundRenderer != null)
-        		backgroundRenderer.shutdown();
+
         	
         	int potWidth = 512;
         	int potHeight = 512;
@@ -406,14 +405,17 @@ class GL2JNIView extends GLSurfaceView {
             
             GLUtils.texImage2D(GL10.GL_TEXTURE_2D, 0, bm, 0);
             
-            backgroundRenderer = new BounceClock(background, width, height, new Runnable() {
+            if (GL2JNIActivity.backgroundRenderer != null)
+            	GL2JNIActivity.backgroundRenderer.shutdown();
+            
+            GL2JNIActivity.backgroundRenderer = new BounceClock(background, width, height, new Runnable() {
 				@Override
 				public void run() {
 					updateBackground = true;
 				}
             });
             
-            backgroundRenderer.start();
+            GL2JNIActivity.backgroundRenderer.start();
             
             GL2JNILib.init(width, height, textureID, potWidth, potHeight, spriteTextureID);
         }

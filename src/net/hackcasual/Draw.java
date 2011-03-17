@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import net.hackcasual.gl2.GL2JNILib;
+
 import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Typeface;
@@ -27,7 +29,7 @@ public class Draw {
 	static Map<Integer, Float> fontSizeCache = new HashMap<Integer, Float>();
 	
 	static Paint spacerPaint = new Paint();
-	static Paint caption = new Paint();
+
 	
 	static {
 		spacerPaint.setStyle(Paint.Style.FILL_AND_STROKE);
@@ -44,10 +46,10 @@ public class Draw {
 	
 	public static void renderTimeHorizontal(Canvas target, int x, int y, int w, int h, int days, int hours, int minutes, int seconds) {
 
-		
+
 		float radius = w / 118.0f;
 		
-		
+		GL2JNILib.setRadius(radius);
 		
 		float spacing = radius / 2.0f;
 
@@ -75,11 +77,11 @@ public class Draw {
 		int secondDigit1 = seconds % 10;
 		
 		
-		renderDigit(target, dayDigit0, cx, cy, DAY_COLOR, DIM_COLOR, radius, spacing);
+		renderDigit(target, dayDigit0, 0, 0, cx, cy, DAY_COLOR, DIM_COLOR, radius, spacing);
 		cx += (digitWidth + interDigitSpace);
-		renderDigit(target, dayDigit1, cx, cy, DAY_COLOR, DIM_COLOR, radius, spacing);
+		renderDigit(target, dayDigit1, 1, 0,cx, cy, DAY_COLOR, DIM_COLOR, radius, spacing);
 		cx += (digitWidth + interDigitSpace);		
-		renderDigit(target, dayDigit2, cx, cy, DAY_COLOR, DIM_COLOR, radius, spacing);
+		renderDigit(target, dayDigit2, 2, 0,cx, cy, DAY_COLOR, DIM_COLOR, radius, spacing);
 		cx += (digitWidth);	
 		
 		cx += spacerWidth / 2.0f - radius;		
@@ -87,9 +89,9 @@ public class Draw {
 		target.drawCircle(cx, cy + spacer2YPos, radius, spacerPaint);
 		cx += spacerWidth / 2.0f + radius;
 		
-		renderDigit(target, hourDigit0, cx, cy, HOUR_COLOR, DIM_COLOR, radius, spacing);
+		renderDigit(target, hourDigit0, 3, 1,cx, cy, HOUR_COLOR, DIM_COLOR, radius, spacing);
 		cx += (digitWidth + interDigitSpace);
-		renderDigit(target, hourDigit1, cx, cy, HOUR_COLOR, DIM_COLOR, radius, spacing);
+		renderDigit(target, hourDigit1, 4, 1,cx, cy, HOUR_COLOR, DIM_COLOR, radius, spacing);
 		cx += (digitWidth);
 
 		cx += spacerWidth / 2.0f - radius;		
@@ -97,9 +99,9 @@ public class Draw {
 		target.drawCircle(cx, cy + spacer2YPos, radius, spacerPaint);
 		cx += spacerWidth / 2.0f + radius;
 		
-		renderDigit(target, minuteDigit0, cx, cy, MINUTE_COLOR, DIM_COLOR, radius, spacing);
+		renderDigit(target, minuteDigit0, 5, 2,cx, cy, MINUTE_COLOR, DIM_COLOR, radius, spacing);
 		cx += (digitWidth + interDigitSpace);
-		renderDigit(target, minuteDigit1, cx, cy, MINUTE_COLOR, DIM_COLOR, radius, spacing);
+		renderDigit(target, minuteDigit1, 6, 2,cx, cy, MINUTE_COLOR, DIM_COLOR, radius, spacing);
 		cx += (digitWidth);
 		
 		cx += spacerWidth / 2.0f - radius;		
@@ -107,15 +109,18 @@ public class Draw {
 		target.drawCircle(cx, cy + spacer2YPos, radius, spacerPaint);
 		cx += spacerWidth / 2.0f + radius;
 		
-		renderDigit(target, secondDigit0, cx, cy, SECONDS_COLOR, DIM_COLOR, radius, spacing);
+		renderDigit(target, secondDigit0, 7, 3,cx, cy, SECONDS_COLOR, DIM_COLOR, radius, spacing);
 		cx += (digitWidth + interDigitSpace);
-		renderDigit(target, secondDigit1, cx, cy, SECONDS_COLOR, DIM_COLOR, radius, spacing);
+		renderDigit(target, secondDigit1, 8, 3,cx, cy, SECONDS_COLOR, DIM_COLOR, radius, spacing);
 		cx += (digitWidth);
 	}
 
 	public static void renderTimeVertical(Canvas target, int x, int y, int w, int h, int days, int hours, int minutes, int seconds) {
 	
 		float radius = h / 74.0f;
+		
+		GL2JNILib.setRadius(radius);
+		
 		float spacing = radius / 2.0f;
 
 		float digitHeight = 14.0f * radius + 6.0f * spacing;
@@ -129,7 +134,7 @@ public class Draw {
 		float maxTimeSpace = w - (2 * digitWidth + interDigitSpace + 4 * radius);		
 		
 		float fontSize = calculateFontSize(w, maxDaySpace, maxTimeSpace, DAY_CAPTION, HOUR_CAPTION, MINUTE_CAPTION, SECOND_CAPTION);
-				
+		Paint caption = new Paint();
 		caption.setTextSize(fontSize);
 		caption.setColor(0xFF333333);
 		caption.setTypeface(Typeface.SANS_SERIF);
@@ -153,11 +158,11 @@ public class Draw {
 		int secondDigit1 = seconds % 10;
 		
 		cx = x + w - (3 * digitWidth + 2 * interDigitSpace);
-		renderDigit(target, dayDigit0, cx, cy, DAY_COLOR, DIM_COLOR, radius, spacing);
+		renderDigit(target, dayDigit0, 0, 0, cx, cy, DAY_COLOR, DIM_COLOR, radius, spacing);
 		cx += (digitWidth + interDigitSpace);
-		renderDigit(target, dayDigit1, cx, cy, DAY_COLOR, DIM_COLOR, radius, spacing);
+		renderDigit(target, dayDigit1, 1, 0, cx, cy, DAY_COLOR, DIM_COLOR, radius, spacing);
 		cx += (digitWidth + interDigitSpace);		
-		renderDigit(target, dayDigit2, cx, cy, DAY_COLOR, DIM_COLOR, radius, spacing);
+		renderDigit(target, dayDigit2, 2, 0, cx, cy, DAY_COLOR, DIM_COLOR, radius, spacing);
 		cx = x + w - (2 * digitWidth + interDigitSpace);
 		cy += digitHeight - radius - 3.0f;
 		target.drawText(DAY_CAPTION, x, cy, caption);
@@ -165,9 +170,9 @@ public class Draw {
 		target.drawLine(x + 1.0f, cy, x + maxDaySpace + 2 * radius, cy, caption);
 		cy += digitBottomPadding + radius;
 				
-		renderDigit(target, hourDigit0, cx, cy, HOUR_COLOR, DIM_COLOR, radius, spacing);
+		renderDigit(target, hourDigit0, 3, 1, cx, cy, HOUR_COLOR, DIM_COLOR, radius, spacing);
 		cx += (digitWidth + interDigitSpace);
-		renderDigit(target, hourDigit1, cx, cy, HOUR_COLOR, DIM_COLOR, radius, spacing);
+		renderDigit(target, hourDigit1, 4, 1,cx, cy, HOUR_COLOR, DIM_COLOR, radius, spacing);
 		cx = x + w - (2 * digitWidth + interDigitSpace);
 		cy += digitHeight - radius - 3.0f;
 		target.drawText(HOUR_CAPTION, x, cy, caption);
@@ -176,9 +181,9 @@ public class Draw {
 		cy += digitBottomPadding + radius;
 
 
-		renderDigit(target, minuteDigit0, cx, cy, MINUTE_COLOR, DIM_COLOR, radius, spacing);
+		renderDigit(target, minuteDigit0, 5, 2,cx, cy, MINUTE_COLOR, DIM_COLOR, radius, spacing);
 		cx += (digitWidth + interDigitSpace);
-		renderDigit(target, minuteDigit1, cx, cy, MINUTE_COLOR, DIM_COLOR, radius, spacing);
+		renderDigit(target, minuteDigit1, 6, 2,cx, cy, MINUTE_COLOR, DIM_COLOR, radius, spacing);
 		cx = x + w - (2 * digitWidth + interDigitSpace);
 		cy += digitHeight - radius - 3.0f;
 		target.drawText(MINUTE_CAPTION, x, cy, caption);
@@ -188,9 +193,9 @@ public class Draw {
 
 
 
-		renderDigit(target, secondDigit0, cx, cy, SECONDS_COLOR, DIM_COLOR, radius, spacing);
+		renderDigit(target, secondDigit0, 7, 3,cx, cy, SECONDS_COLOR, DIM_COLOR, radius, spacing);
 		cx += (digitWidth + interDigitSpace);
-		renderDigit(target, secondDigit1, cx, cy, SECONDS_COLOR, DIM_COLOR, radius, spacing);
+		renderDigit(target, secondDigit1, 8, 3,cx, cy, SECONDS_COLOR, DIM_COLOR, radius, spacing);
 		cx = x + w - (2 * digitWidth + interDigitSpace);
 		cy += digitHeight - radius - 3.0f;
 		target.drawText(SECOND_CAPTION, x, cy, caption);
@@ -212,10 +217,17 @@ public class Draw {
 	static PointI getPoint(int row, int column) {
 		return digitPoints[row][column];
 	}
+
+	static Map<Integer,Set<PointI>> previousPoints = new HashMap<Integer,Set<PointI>>();
 	
-	static void renderDigit(Canvas target, int digit, float x, float y, int activeColor, int deactiveColor, float radius, float spacing) {
+	static void addPoint(float cx, float cy, int type) {
+		GL2JNILib.addPoint(cx, cy, type);
+	}
+	
+	static void renderDigit(Canvas target, int digit, int digitId, int digitClass, float x, float y, int activeColor, int deactiveColor, float radius, float spacing) {
 		Set<PointI> activePoints = Digit.getPointsForNum(digit);
-		
+		Set<PointI> prev = previousPoints.get(digitId);
+		previousPoints.put(digitId, activePoints);
 		for (int r = 0; r < 7; r++)
 			for (int c = 0; c < 4; c++) {
 				PointI curPoint = getPoint(r,c);
@@ -223,14 +235,20 @@ public class Draw {
 				Paint pointPaint = new Paint();
 				pointPaint.setStyle(Paint.Style.FILL_AND_STROKE);
 				pointPaint.setAntiAlias(true);
+
+				float cx = c * (2 * radius + spacing) + x;
+				float cy = r * (2 * radius + spacing) + y;
+				
 				
 				if (activePoints.contains(curPoint))
 					pointPaint.setColor(activeColor);
-				else
+				else {
 					pointPaint.setColor(deactiveColor);
+					 if (prev != null && prev.contains(curPoint)) {
+						 addPoint(cx,cy, digitClass);
+					 }
+				}
 				
-				float cx = c * (2 * radius + spacing) + x;
-				float cy = r * (2 * radius + spacing) + y;
 				
 				target.drawCircle(cx, cy, radius, pointPaint);
 				

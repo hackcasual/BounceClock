@@ -26,7 +26,7 @@ public class BounceClock  extends Thread {
 	
 
     	
-    	boolean stop = false;
+		boolean stop;
     	Bitmap frameBuffer;
     	int width, height;
     	Runnable updater;
@@ -36,6 +36,7 @@ public class BounceClock  extends Thread {
     		this.width = width;
     		this.height = height;
     		this.updater = updater;
+    		this.stop = false;
     	}
     	
     	@Override

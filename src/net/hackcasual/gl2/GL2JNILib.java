@@ -30,4 +30,7 @@ public class GL2JNILib {
      */
      public static native void init(int width, int height, int backgroundTextureID, int bgw, int bgh, int spriteTextureID);
      public static native void step();
+     public static native void setRadius(float radius);
+     public static native void addPoint(float cx, float cy, int type);
+     public static native void setGravity(float x, float y);
 }

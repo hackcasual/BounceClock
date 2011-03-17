@@ -99,7 +99,7 @@ GLfloat glSpriteTextureCoords[12 * 8];
 
 
 int screenWidth, screenHeight;
-
+float gravity_x, gravity_y;
 
 struct point {
 	float x, y, vel_x, vel_y, rot, vel_rot;
@@ -175,6 +175,7 @@ void addPoint(point p) {
 	pthread_mutex_unlock(&point_mutex);
 }
 
+float radius = 10.0f;
 
 
 void simulatePoints(float grav_x, float grav_y) {
@@ -192,19 +193,19 @@ void simulatePoints(float grav_x, float grav_y) {
 		point_buffer[i].vel_x += grav_x;
 		point_buffer[i].vel_y += grav_y;
 		
-		if (point_buffer[i].y > screenHeight - 10 && point_buffer[i].vel_y > 0) {
+		if (point_buffer[i].y > screenHeight - radius && point_buffer[i].vel_y > 0) {
 			point_buffer[i].vel_y = -point_buffer[i].vel_y * 0.9;
 			point_buffer[i].vel_rot = -point_buffer[i].vel_rot * 1.05;
 		}
 		
-		if (point_buffer[i].x < -20 || point_buffer[i].y < -20 || point_buffer[i].x > screenWidth + 20) {
+		if (point_buffer[i].x < -50 || point_buffer[i].y < -50 || point_buffer[i].x > screenWidth + 50) {
 			pointToDelete = i;
 		}
 	}
 	
 	if (pointToDelete > -1)
 		deletePoint(pointToDelete);
-	else if (numPoints < 100) {
+	/*else if (numPoints < 300) {
 		point newPoint;
 		
 		newPoint.x = rand() %100 + (screenWidth / 2 - 50);
@@ -215,7 +216,7 @@ void simulatePoints(float grav_x, float grav_y) {
 		newPoint.vel_rot = -0.1f + (rand() % 1000) / 5000.0f;
 		newPoint.texture_id = rand() % 8;
 		addPoint(newPoint);
-	}
+	}*/
 }
 
 GLuint loadShader(GLenum shaderType, const char* pSource) {
@@ -307,8 +308,8 @@ bool setupGraphics(int w, int h, int backgroundTextureID, int bgW, int bgH, int 
 	srand(time(NULL));
 	screenWidth = w;
 	screenHeight = h;
-	scaleX = w / 20;
-	scaleY = h / 20;
+	gravity_x = 0.0f;
+	gravity_y = 0.9f;
 
     printGLString("Version", GL_VERSION);
     printGLString("Vendor", GL_VENDOR);
@@ -388,8 +389,6 @@ bool setupGraphics(int w, int h, int backgroundTextureID, int bgW, int bgH, int 
 	glEnable(GL_BLEND);
 	glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);	
 
-	makeDemoPoint();
-	loadGLBuffers();
     return true;
 }
 
@@ -417,7 +416,8 @@ const GLfloat glTestPos[] = {
 
 void renderFrame() {
     static float grey;
-
+	scaleX = screenWidth / (radius * 2);
+	scaleY = screenHeight / (radius * 2);
 	GLfloat vVertices[] = { -1.0f, 1.0f, 0.0f, // Position 0
 
 	                        0.0f, 0.0f, // TexCoord 0
@@ -438,7 +438,7 @@ void renderFrame() {
 	GLushort stampindices[] = { 0, 1, 2, 3 };
 	GLsizei stride = 5 * sizeof(GLfloat); // 3 for position, 2 for texture
 
-	simulatePoints(0.0f, 0.03f);
+	simulatePoints(gravity_x, gravity_y);
 	loadGLBuffers();
     grey += 0.01f;
     if (grey > 1.0f) {
@@ -526,6 +526,9 @@ GLfloat textureMap[MAX_POINTS * 12]; // 2 floats per vertex
 extern "C" {
     JNIEXPORT void JNICALL Java_net_hackcasual_gl2_GL2JNILib_init(JNIEnv * env, jobject obj,  jint width, jint height, jint backgroundTextureID, jint backgroundTextureWidth, jint backgroundTextureHeight, jint spriteTexID);
     JNIEXPORT void JNICALL Java_net_hackcasual_gl2_GL2JNILib_step(JNIEnv * env, jobject obj);
+    JNIEXPORT void JNICALL Java_net_hackcasual_gl2_GL2JNILib_addPoint(JNIEnv * env, jobject obj, jfloat cx, jfloat cy, jint type);
+    JNIEXPORT void JNICALL Java_net_hackcasual_gl2_GL2JNILib_setRadius(JNIEnv * env, jobject obj, jfloat r);		
+    JNIEXPORT void JNICALL Java_net_hackcasual_gl2_GL2JNILib_setGravity(JNIEnv * env, jobject obj, jfloat x, jfloat y);		
 };
 
 JNIEXPORT void JNICALL Java_net_hackcasual_gl2_GL2JNILib_init(JNIEnv * env, jobject obj,  jint width, jint height, jint backgroundTextureID, jint backgroundTextureWidth, jint backgroundTextureHeight, jint spriteTexID)
@@ -536,4 +539,31 @@ JNIEXPORT void JNICALL Java_net_hackcasual_gl2_GL2JNILib_init(JNIEnv * env, jobj
 JNIEXPORT void JNICALL Java_net_hackcasual_gl2_GL2JNILib_step(JNIEnv * env, jobject obj)
 {
     renderFrame();
+}
+
+JNIEXPORT void JNICALL Java_net_hackcasual_gl2_GL2JNILib_addPoint(JNIEnv * env, jobject obj, jfloat cx, jfloat cy, jint type) {
+		point newPoint;
+		newPoint.x = cx;
+		newPoint.y = cy;
+		newPoint.rot = 3.14f / (rand() %100);
+		newPoint.vel_y = -5.0f + (rand() % 1000) / 100.0f;
+		newPoint.vel_x = -5.0f + (rand() % 1000) / 100.0f;
+		newPoint.vel_rot = -0.1f + (rand() % 1000) / 5000.0f;
+		
+		if (!(rand() % 20)) {
+			newPoint.texture_id = 4 + rand() % 4;
+		} else {
+			newPoint.texture_id = type;
+		}
+
+		addPoint(newPoint);
+}
+
+JNIEXPORT void JNICALL Java_net_hackcasual_gl2_GL2JNILib_setRadius(JNIEnv * env, jobject obj, jfloat r) {
+	radius = r;
+}
+
+JNIEXPORT void JNICALL Java_net_hackcasual_gl2_GL2JNILib_setGravity(JNIEnv * env, jobject obj, jfloat x, jfloat y) {
+	gravity_x = x;
+	gravity_y = y;
 }
