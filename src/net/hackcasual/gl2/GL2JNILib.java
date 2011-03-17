@@ -33,4 +33,5 @@ public class GL2JNILib {
      public static native void setRadius(float radius);
      public static native void addPoint(float cx, float cy, int type);
      public static native void setGravity(float x, float y);
+     public static native void togglePartyMode();
 }

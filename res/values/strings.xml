@@ -6,4 +6,5 @@
     <string name="minutes">Minutes</string>
     <string name="seconds">Seconds</string>    
     <string name="wallpaper">Bounce Clock</string>    
+    <string name="party_mode">Party Mode!</string>        
 </resources>

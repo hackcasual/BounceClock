@@ -17,6 +17,7 @@
 package net.hackcasual.gl2;
 
 import net.hackcasual.BounceClock;
+import net.hackcasual.R;
 import android.app.Activity;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -24,6 +25,9 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
 public class GL2JNIActivity extends Activity implements SensorEventListener {
 
@@ -58,6 +62,25 @@ public class GL2JNIActivity extends Activity implements SensorEventListener {
         mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.bouncedown, menu);
+        return true;
+    }
+    
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+        case R.id.party_mode:
+            GL2JNILib.togglePartyMode();
+            return true;
+        default:
+            return super.onOptionsItemSelected(item);
+        }
+    }    
+    
 	@Override
 	public void onAccuracyChanged(Sensor sensor, int accuracy) {
 		// TODO Auto-generated method stub

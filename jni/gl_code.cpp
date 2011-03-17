@@ -100,11 +100,14 @@ GLfloat glSpriteTextureCoords[12 * 8];
 
 int screenWidth, screenHeight;
 float gravity_x, gravity_y;
+int partyMode = 0;
 
 struct point {
 	float x, y, vel_x, vel_y, rot, vel_rot;
 	int texture_id;
 };
+
+
 
 pthread_mutex_t point_mutex = PTHREAD_MUTEX_INITIALIZER;
 
@@ -205,7 +208,7 @@ void simulatePoints(float grav_x, float grav_y) {
 	
 	if (pointToDelete > -1)
 		deletePoint(pointToDelete);
-	/*else if (numPoints < 300) {
+	else if (numPoints < 300 && partyMode) {
 		point newPoint;
 		
 		newPoint.x = rand() %100 + (screenWidth / 2 - 50);
@@ -214,9 +217,9 @@ void simulatePoints(float grav_x, float grav_y) {
 		newPoint.vel_y = -2.0f + (rand() % 600) / 100.0f;
 		newPoint.vel_x = -3.0f + (rand() % 600) / 100.0f;
 		newPoint.vel_rot = -0.1f + (rand() % 1000) / 5000.0f;
-		newPoint.texture_id = rand() % 8;
+		newPoint.texture_id = 4 + (rand() % 4);
 		addPoint(newPoint);
-	}*/
+	}
 }
 
 GLuint loadShader(GLenum shaderType, const char* pSource) {
@@ -416,8 +419,8 @@ const GLfloat glTestPos[] = {
 
 void renderFrame() {
     static float grey;
-	scaleX = screenWidth / (radius * 2);
-	scaleY = screenHeight / (radius * 2);
+	scaleX = screenWidth / (radius * 2 * (partyMode?3:1));
+	scaleY = screenHeight / (radius * 2 * (partyMode?3:1));
 	GLfloat vVertices[] = { -1.0f, 1.0f, 0.0f, // Position 0
 
 	                        0.0f, 0.0f, // TexCoord 0
@@ -528,7 +531,8 @@ extern "C" {
     JNIEXPORT void JNICALL Java_net_hackcasual_gl2_GL2JNILib_step(JNIEnv * env, jobject obj);
     JNIEXPORT void JNICALL Java_net_hackcasual_gl2_GL2JNILib_addPoint(JNIEnv * env, jobject obj, jfloat cx, jfloat cy, jint type);
     JNIEXPORT void JNICALL Java_net_hackcasual_gl2_GL2JNILib_setRadius(JNIEnv * env, jobject obj, jfloat r);		
-    JNIEXPORT void JNICALL Java_net_hackcasual_gl2_GL2JNILib_setGravity(JNIEnv * env, jobject obj, jfloat x, jfloat y);		
+    JNIEXPORT void JNICALL Java_net_hackcasual_gl2_GL2JNILib_setGravity(JNIEnv * env, jobject obj, jfloat x, jfloat y);
+    JNIEXPORT void JNICALL Java_net_hackcasual_gl2_GL2JNILib_togglePartyMode(JNIEnv * env, jobject obj);	
 };
 
 JNIEXPORT void JNICALL Java_net_hackcasual_gl2_GL2JNILib_init(JNIEnv * env, jobject obj,  jint width, jint height, jint backgroundTextureID, jint backgroundTextureWidth, jint backgroundTextureHeight, jint spriteTexID)
@@ -566,4 +570,11 @@ JNIEXPORT void JNICALL Java_net_hackcasual_gl2_GL2JNILib_setRadius(JNIEnv * env,
 JNIEXPORT void JNICALL Java_net_hackcasual_gl2_GL2JNILib_setGravity(JNIEnv * env, jobject obj, jfloat x, jfloat y) {
 	gravity_x = x;
 	gravity_y = y;
+}
+
+JNIEXPORT void JNICALL Java_net_hackcasual_gl2_GL2JNILib_togglePartyMode(JNIEnv * env, jobject obj) {
+	if (partyMode)
+		partyMode = 0;
+	else
+		partyMode = 1;
 }

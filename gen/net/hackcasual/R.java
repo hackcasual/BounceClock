@@ -14,10 +14,14 @@ public final class R {
         public static final int icon=0x7f020000;
     }
     public static final class id {
-        public static final int clock_view=0x7f070000;
+        public static final int clock_view=0x7f080000;
+        public static final int party_mode=0x7f080001;
     }
     public static final class layout {
         public static final int main=0x7f030000;
+    }
+    public static final class menu {
+        public static final int bouncedown=0x7f070000;
     }
     public static final class raw {
         public static final int point_texture=0x7f050000;
@@ -27,6 +31,7 @@ public final class R {
         public static final int days=0x7f060002;
         public static final int hours=0x7f060001;
         public static final int minutes=0x7f060003;
+        public static final int party_mode=0x7f060006;
         public static final int seconds=0x7f060004;
         public static final int wallpaper=0x7f060005;
     }
