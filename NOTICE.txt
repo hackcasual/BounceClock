@@ -1,0 +1,7 @@
+Bounce Clock
+   Copyright 2011 Charles Vaughn
+   
+   This application was created for the 2011 Google IO Android Last Call challenge.
+   
+   The GL2JNI source was taken from an Android NDK sample.
+   
